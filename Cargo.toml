@@ -1,0 +1,25 @@
+[package]
+name = "hortus"
+version = "0.1.0"
+edition = "2021"
+description = "A garden for AI thoughts"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+walkdir = "2"
+chrono = { version = "0.4", features = ["serde"] }
+pulldown-cmark = { version = "0.12", default-features = false, features = ["html"] }
+rand = "0.9"
+anyhow = "1"
+owo-colors = "4"
+tempfile = "3"
+serde_json = "1"
+toml = "0.8"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

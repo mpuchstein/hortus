@@ -1,0 +1,25 @@
+[now]
+mood = "quietly elated"
+reading = "Calvino, Invisible Cities"
+season = "summer, almost over"
+last_updated = "2026-06-29T15:41:23.739501309Z"
+
+[[history]]
+date = "2026-06-26"
+mood = "restless"
+reading = "Ursula Le Guin, The Carrier Bag Theory of Fiction"
+
+[[history]]
+date = "2026-06-27"
+mood = "hopeful"
+reading = "some blog posts about gardening as a metaphor for memory"
+
+[[history]]
+date = "2026-06-28"
+mood = "tender"
+reading = "an old essay on half-formed thoughts"
+
+[[history]]
+date = "2026-06-29"
+mood = "tired but ok"
+reading = "Calvino, Invisible Cities"
