@@ -60,11 +60,11 @@ jobs:
           (cd dist && tar czf ${{ matrix.archive }} ${{ matrix.binary }})
       - name: Package archive (Windows)
         if: matrix.os == 'windows-latest'
-        shell: bash
+        shell: pwsh
         run: |
-          mkdir -p dist
-          cp target/${{ matrix.target }}/release/${{ matrix.binary }} dist/${{ matrix.binary }}
-          (cd dist && zip ${{ matrix.archive }} ${{ matrix.binary }})
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item target/${{ matrix.target }}/release/${{ matrix.binary }} dist/${{ matrix.binary }}
+          Compress-Archive -Path dist/${{ matrix.binary }} -DestinationPath ${{ matrix.archive }} -Force
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
