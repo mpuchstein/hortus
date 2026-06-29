@@ -5,7 +5,8 @@
 # example garden caches
 my-hortus/.hortus/cache
 
-# project-local superlocalmemory (scoped via opencode.jsonc)
+# project-local superlocalmemory (no longer used; see opencode.jsonc)
 .slm/
 .github/copilot-instructions.md
+bin/.slm/
 

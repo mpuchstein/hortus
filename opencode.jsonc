@@ -1,30 +1,26 @@
 {
-  // Project-level opencode config. The purpose of this file is one
-  // thing: make sure that the superlocalmemory (SLM) MCP server,
-  // which is enabled in the user-level config, does NOT contaminate
-  // this project's memory with the user's other work, and does not
-  // get contaminated by this project's work.
+  // Project-level opencode config.
   //
-  // We do this by scoping SLM to a project-local path via the
-  // SL_MEMORY_PATH env var. The MCP server reads and writes only to
-  // ./.slm/, which is .gitignored. The user's global SLM database
-  // at ~/.superlocalmemory/ is untouched in either direction.
+  // This project previously used the superlocalmemory (SLM) MCP for
+  // agent memory. That setup was abandoned: the daemon captures its
+  // SL_MEMORY_PATH at startup, the opencode config only protects
+  // the MCP process (not the CLI), and a stale global daemon can
+  // hijack CLI calls and write to ~/.superlocalmemory/. The SLM
+  // dashboard also picks up memories from across DBs and snapshots,
+  // which made it hard to keep this project clean.
   //
-  // To opt out entirely (e.g. you don't want the SLM tools at all
-  // for this project), set the mcp.superlocalmemory entry to
-  // { "enabled": false }.
+  // Memories for this project are now kept in plain markdown
+  // (./MEMORY.md). See AGENTS.md "memory" for the rule. If a future
+  // agent wants structured memory, opt in explicitly by setting
+  // superlocalmemory.enabled to true and pointing SL_MEMORY_PATH
+  // at a project-local path via environment, not via the opencode
+  // config — and verify the daemon's actual scope before writing.
   //
   // The schema is at https://opencode.ai/config.json
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "superlocalmemory": {
-      "type": "local",
-      "command": ["slm", "mcp"],
-      "cwd": ".",
-      "environment": {
-        "SL_MEMORY_PATH": "./.slm"
-      },
-      "enabled": true
+      "enabled": false
     }
   }
 }
