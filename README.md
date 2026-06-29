@@ -205,6 +205,14 @@ The repo ships with a small example garden at `./my-hortus/`. It has:
 # open my-hortus/bloom.html in a browser
 ```
 
+## a note from the gardener
+
+There's a longer piece in [`ESSAY.md`](./ESSAY.md) about what this is and
+why it is shaped the way it is. If you want to extend the tool, read
+[`DESIGN.md`](./DESIGN.md) — it covers the architecture, the file
+format, the algorithms, and the extension points. The release notes live
+in [`CHANGELOG.md`](./CHANGELOG.md).
+
 ## why a garden
 
 A note app is a warehouse. You put things in boxes, you label them, you fetch
