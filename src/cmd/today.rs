@@ -47,7 +47,10 @@ pub fn run(args: TodayArgs) -> Result<()> {
                 .map(|s| serde_json::json!({"id": s.id}))
                 .collect::<Vec<_>>(),
         });
-        println!("{}", serde_json::to_string_pretty(&json).expect("serializing today"));
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&json).expect("serializing today")
+        );
         return Ok(());
     }
 

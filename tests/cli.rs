@@ -82,9 +82,8 @@ fn help_shows_command_list() {
     assert_ok(&out);
     let s = stdout(&out);
     for verb in [
-        "plant", "sow", "tend", "wander", "list", "compost", "cross",
-        "merge", "unmerge", "diary", "letter", "today", "forage",
-        "stats", "untend", "climate", "quote", "tag", "bloom",
+        "plant", "sow", "tend", "wander", "list", "compost", "cross", "merge", "unmerge", "diary",
+        "letter", "today", "forage", "stats", "untend", "climate", "quote", "tag", "bloom",
     ] {
         assert!(s.contains(verb), "--help missing command: {verb}\n{s}");
     }
@@ -112,7 +111,10 @@ fn plant_two_and_sow() {
     let root = unique_temp();
     let _ = run(&["plant", "alpha: a small observation"], &root);
     let _ = run(&["plant", "beta: a different observation"], &root);
-    let out = run(&["sow", "first bed", "2026-06-29-alpha-a-small-observation"], &root);
+    let out = run(
+        &["sow", "first bed", "2026-06-29-alpha-a-small-observation"],
+        &root,
+    );
     assert_ok(&out);
 
     let list_out = run(&["list", "--bed", "first-bed"], &root);
@@ -127,7 +129,10 @@ fn compost_moves_and_restores() {
     let seed_id = "2026-06-29-a-seed-to-release";
     assert!(root.join("seeds").join(format!("{seed_id}.md")).exists());
 
-    let out = run(&["compost", seed_id, "--epitaph", "released for testing"], &root);
+    let out = run(
+        &["compost", seed_id, "--epitaph", "released for testing"],
+        &root,
+    );
     assert_ok(&out);
     assert!(!root.join("seeds").join(format!("{seed_id}.md")).exists());
     assert!(root.join("compost").join(format!("{seed_id}.md")).exists());
@@ -169,7 +174,10 @@ fn today_json_has_expected_shape() {
 fn cross_json_outputs_pairs() {
     let root = unique_temp();
     let _ = run(&["plant", "the cipher sits in the garden"], &root);
-    let _ = run(&["plant", "a palimpsest of small notes about midnight"], &root);
+    let _ = run(
+        &["plant", "a palimpsest of small notes about midnight"],
+        &root,
+    );
     let out = run(&["cross", "--json"], &root);
     assert_ok(&out);
     let v: serde_json::Value = serde_json::from_str(&stdout(&out)).expect("cross JSON");
@@ -184,7 +192,10 @@ fn forage_finds_phrase_with_context() {
     let out = run(&["forage", "small"], &root);
     assert_ok(&out);
     let s = stdout(&out);
-    assert!(s.contains("small"), "forage should find the word 'small': {s}");
+    assert!(
+        s.contains("small"),
+        "forage should find the word 'small': {s}"
+    );
 }
 
 #[test]
@@ -207,7 +218,10 @@ fn forage_json_includes_snippets() {
 #[test]
 fn climate_set_and_show() {
     let root = unique_temp();
-    let out = run(&["climate", "--mood", "tested", "--reading", "the spec"], &root);
+    let out = run(
+        &["climate", "--mood", "tested", "--reading", "the spec"],
+        &root,
+    );
     assert_ok(&out);
     let show = run(&["climate"], &root);
     assert_ok(&show);
@@ -250,10 +264,8 @@ fn untend_clears_last_tended() {
     // Use tend to set last_tended to a known date, then untend.
     let out = run(&["untend", "2026-06-29-forgotten-seed"], &root);
     assert_ok(&out);
-    let body = std::fs::read_to_string(
-        root.join("seeds").join("2026-06-29-forgotten-seed.md"),
-    )
-    .unwrap();
+    let body =
+        std::fs::read_to_string(root.join("seeds").join("2026-06-29-forgotten-seed.md")).unwrap();
     // After untend, last_tended should be null in the YAML.
     assert!(
         body.contains("last_tended: null") || !body.contains("last_tended:"),
@@ -295,8 +307,11 @@ fn version_mismatch_is_an_error() {
     let climate_path = root.join("climate.toml");
     assert!(climate_path.exists());
     let original = std::fs::read_to_string(&climate_path).unwrap();
-    std::fs::write(&climate_path, original.replace("version = 1", "version = 999"))
-        .unwrap();
+    std::fs::write(
+        &climate_path,
+        original.replace("version = 1", "version = 999"),
+    )
+    .unwrap();
     let out = run(&["today"], &root);
     assert!(!out.status.success(), "version mismatch should be an error");
     let s = stderr(&out) + &stdout(&out);

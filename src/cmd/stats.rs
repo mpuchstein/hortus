@@ -74,15 +74,15 @@ pub fn run(args: StatsArgs) -> Result<()> {
             "moods": moods,
             "tags": tags,
         });
-        println!("{}", serde_json::to_string_pretty(&json).expect("serializing stats"));
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&json).expect("serializing stats")
+        );
         return Ok(());
     }
 
     println!();
-    println!(
-        "  {}  the garden in numbers",
-        "stats".bright_green().bold()
-    );
+    println!("  {}  the garden in numbers", "stats".bright_green().bold());
     println!();
 
     println!(

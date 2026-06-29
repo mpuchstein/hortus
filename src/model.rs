@@ -259,8 +259,7 @@ impl Climate {
         if p.exists() {
             let raw = fs::read_to_string(&p)
                 .with_context(|| format!("reading climate {}", p.display()))?;
-            let mut c: Self =
-                toml::from_str(&raw).context("parsing climate.toml")?;
+            let mut c: Self = toml::from_str(&raw).context("parsing climate.toml")?;
             // Existing pre-versioning files implicitly use version 1. Bump
             // on save so the version field is set going forward.
             if c.version == 0 {

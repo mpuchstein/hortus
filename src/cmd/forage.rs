@@ -71,9 +71,8 @@ pub fn run(args: ForageArgs) -> Result<()> {
                     .map(|(line_idx, line)| {
                         let start = line_idx.saturating_sub(args.context);
                         let end = (line_idx + args.context + 1).min(lines.len());
-                        let snippet_lines: Vec<String> = (start..end)
-                            .map(|i| lines[i].to_string())
-                            .collect();
+                        let snippet_lines: Vec<String> =
+                            (start..end).map(|i| lines[i].to_string()).collect();
                         serde_json::json!({
                             "match_line": line_idx + 1,
                             "match_text": line,
@@ -99,10 +98,7 @@ pub fn run(args: ForageArgs) -> Result<()> {
     }
 
     if hits.is_empty() {
-        println!(
-            "{}",
-            format!("no seeds contain `{}`.", args.query).yellow()
-        );
+        println!("{}", format!("no seeds contain `{}`.", args.query).yellow());
         return Ok(());
     }
 
