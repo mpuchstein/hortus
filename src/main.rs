@@ -1,9 +1,6 @@
-mod cmd;
-mod model;
-mod text;
-
 use anyhow::Result;
 use clap::{Parser, Subcommand};
+use hortus::cmd;
 
 /// Hortus — a garden for AI thoughts.
 #[derive(Parser, Debug)]
@@ -47,6 +44,10 @@ enum Command {
     Tag(cmd::tag::TagArgs),
     /// Fuse two seeds into a new one.
     Merge(cmd::merge::MergeArgs),
+    /// Reverse a `merge` — split a merged seed back into its originals.
+    Unmerge(cmd::unmerge::UnmergeArgs),
+    /// A daily landing: weather, today's seeds, a random quote.
+    Today(cmd::today::TodayArgs),
 }
 
 fn main() -> Result<()> {
@@ -69,5 +70,7 @@ fn main() -> Result<()> {
         Command::Quote(a) => cmd::quote::run(a),
         Command::Tag(a) => cmd::tag::run(a),
         Command::Merge(a) => cmd::merge::run(a),
+        Command::Unmerge(a) => cmd::unmerge::run(a),
+        Command::Today(a) => cmd::today::run(a),
     }
 }

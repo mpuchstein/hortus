@@ -53,9 +53,7 @@ pub fn run(args: WanderArgs) -> Result<()> {
             .filter_map(|sid| seeds.iter().find(|s| &s.id == sid).cloned())
             .collect()
     } else if !beds.is_empty() {
-        let bed = beds
-            .choose(&mut rand::rng())
-            .context("choosing a bed")?;
+        let bed = beds.choose(&mut rand::rng()).context("choosing a bed")?;
         println!(
             "{}  wandering into {}",
             "·".green(),

@@ -48,7 +48,13 @@ pub fn run(args: DiaryArgs) -> Result<()> {
     Ok(())
 }
 
-fn render(seeds: &[&Seed], since: chrono::NaiveDate, until: chrono::NaiveDate, climate: &crate::model::Climate, days: i64) -> String {
+fn render(
+    seeds: &[&Seed],
+    since: chrono::NaiveDate,
+    until: chrono::NaiveDate,
+    climate: &crate::model::Climate,
+    days: i64,
+) -> String {
     use std::collections::BTreeMap;
     let mut by_day: BTreeMap<chrono::NaiveDate, Vec<&Seed>> = BTreeMap::new();
     for s in seeds {
@@ -57,7 +63,13 @@ fn render(seeds: &[&Seed], since: chrono::NaiveDate, until: chrono::NaiveDate, c
 
     let mut out = String::new();
     out.push_str(&format!("# Diary: {} → {}\n\n", since, until));
-    let mut meta = format!("*{} day{} · {} seed{}", days, if days == 1 { "" } else { "s" }, seeds.len(), if seeds.len() == 1 { "" } else { "s" });
+    let mut meta = format!(
+        "*{} day{} · {} seed{}",
+        days,
+        if days == 1 { "" } else { "s" },
+        seeds.len(),
+        if seeds.len() == 1 { "" } else { "s" }
+    );
     if let Some(m) = climate.now.mood.as_deref() {
         meta.push_str(&format!(" · mood: {}", m));
     }
@@ -75,10 +87,7 @@ fn render(seeds: &[&Seed], since: chrono::NaiveDate, until: chrono::NaiveDate, c
                 .as_deref()
                 .map(|m| format!(" · {}", m))
                 .unwrap_or_default();
-            out.push_str(&format!(
-                "- **{}**{}\n",
-                s.id, mood_part
-            ));
+            out.push_str(&format!("- **{}**{}\n", s.id, mood_part));
             for line in s.body.lines().take(8) {
                 if line.trim().is_empty() {
                     continue;

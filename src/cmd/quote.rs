@@ -32,10 +32,7 @@ pub fn run(args: QuoteArgs) -> Result<()> {
             .find(|b| crate::model::Bed::slug(&b.name) == crate::model::Bed::slug(name))
             .map(|b| b.seeds.clone())
             .unwrap_or_default();
-        seeds
-            .iter()
-            .filter(|s| bed.contains(&s.id))
-            .collect()
+        seeds.iter().filter(|s| bed.contains(&s.id)).collect()
     } else {
         seeds.iter().collect()
     };
@@ -60,11 +57,7 @@ pub fn run(args: QuoteArgs) -> Result<()> {
 
 fn print_quote(s: &Seed) {
     let date = s.planted.format("%Y-%m-%d");
-    println!(
-        "  {} {}",
-        date.dimmed(),
-        s.id.bright_green()
-    );
+    println!("  {} {}", date.dimmed(), s.id.bright_green());
     for line in s.body.lines().take(6) {
         if line.trim().is_empty() {
             continue;

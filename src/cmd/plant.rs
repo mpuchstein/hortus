@@ -35,8 +35,7 @@ pub struct PlantArgs {
 
 pub fn run(args: PlantArgs) -> Result<()> {
     let garden = Garden::discover(None)?;
-    let interactive = args.interactive
-        || (args.thought.is_empty() && !args.stdin);
+    let interactive = args.interactive || (args.thought.is_empty() && !args.stdin);
 
     // ----- Interactive mode: open editor with a template. -----
     if interactive {
@@ -79,10 +78,7 @@ pub fn run(args: PlantArgs) -> Result<()> {
     println!("{} planted {}", "·".green(), id.bright_green());
     println!(
         "  {}",
-        garden
-            .seeds_dir()
-            .join(format!("{}.md", id))
-            .display()
+        garden.seeds_dir().join(format!("{}.md", id)).display()
     );
     Ok(())
 }
@@ -100,7 +96,10 @@ fn run_interactive(garden: &Garden, args: &PlantArgs) -> Result<()> {
     template.push_str(&format!("last_tended: {}\n", today));
     template.push_str(&format!(
         "mood: {}\n",
-        args.mood.clone().or_else(|| climate.now.mood.clone()).unwrap_or_default()
+        args.mood
+            .clone()
+            .or_else(|| climate.now.mood.clone())
+            .unwrap_or_default()
     ));
     template.push_str("tags: []\n");
     template.push_str("---\n\n");
@@ -154,7 +153,8 @@ fn run_interactive(garden: &Garden, args: &PlantArgs) -> Result<()> {
     let (fm, body) = crate::model::split_frontmatter(&raw);
 
     // Parse the frontmatter as a partial Seed.
-    let mut s: Seed = serde_yaml::from_str(&fm).context("parsing frontmatter (check YAML syntax)")?;
+    let mut s: Seed =
+        serde_yaml::from_str(&fm).context("parsing frontmatter (check YAML syntax)")?;
     // The marker line separates template scaffolding from the user's text.
     // Take whatever is *after* the marker — that's the thought.
     let user_text = body
@@ -191,7 +191,10 @@ fn run_interactive(garden: &Garden, args: &PlantArgs) -> Result<()> {
 
     s.save(garden)?;
     println!("{} planted {}", "·".green(), s.id.bright_green());
-    println!("  {}", garden.seeds_dir().join(format!("{}.md", s.id)).display());
+    println!(
+        "  {}",
+        garden.seeds_dir().join(format!("{}.md", s.id)).display()
+    );
     Ok(())
 }
 

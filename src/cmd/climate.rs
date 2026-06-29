@@ -100,7 +100,10 @@ fn print_now(c: &Climate) -> Result<()> {
     }
     if !c.history.is_empty() {
         println!();
-        println!("  {}", format!("history ({} entries)", c.history.len()).dimmed());
+        println!(
+            "  {}",
+            format!("history ({} entries)", c.history.len()).dimmed()
+        );
         for h in c.history.iter().rev().take(5) {
             let m = h.mood.as_deref().unwrap_or("—");
             let r = h.reading.as_deref().unwrap_or("—");

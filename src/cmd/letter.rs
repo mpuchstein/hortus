@@ -186,3 +186,60 @@ fn truncate(s: &str, max: usize) -> String {
     let cut = s[..max].rfind(' ').unwrap_or(max);
     format!("{}…", &s[..cut])
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::Seed;
+
+    fn make_seed(body: &str) -> Seed {
+        Seed {
+            id: "test".into(),
+            planted: chrono::NaiveDate::from_ymd_opt(2026, 6, 29).unwrap(),
+            last_tended: None,
+            mood: None,
+            tags: vec![],
+            composted_at: None,
+            epitaph: None,
+            body: body.into(),
+            is_composted: false,
+        }
+    }
+
+    #[test]
+    fn first_sentence_simple() {
+        let s = make_seed("Hello, world.\nThis is the rest.");
+        assert_eq!(first_sentence(&s), "Hello, world.");
+    }
+
+    #[test]
+    fn first_sentence_no_period() {
+        let s = make_seed("A fragment with no ending\nMore text");
+        assert_eq!(first_sentence(&s), "A fragment with no ending");
+    }
+
+    #[test]
+    fn first_sentence_empty() {
+        let s = make_seed("");
+        assert_eq!(first_sentence(&s), "");
+    }
+
+    #[test]
+    fn first_sentence_multiline_first_line() {
+        let s = make_seed("First line here. Second line.\nThird line.");
+        assert_eq!(first_sentence(&s), "First line here.");
+    }
+
+    #[test]
+    fn truncate_short_unchanged() {
+        assert_eq!(truncate("short text", 100), "short text");
+    }
+
+    #[test]
+    fn truncate_long_adds_ellipsis() {
+        let s = "a".repeat(50);
+        let t = truncate(&s, 10);
+        assert!(t.ends_with('…'));
+        assert!(t.len() < s.len());
+    }
+}

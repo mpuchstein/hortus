@@ -56,7 +56,12 @@ fn print_mosaic(garden: &Garden, seeds: &[Seed], beds: &[crate::model::Bed]) {
     let live = seeds.iter().filter(|s| !s.is_composted).count();
     let composted = seeds.len() - live;
     let header: String = if composted > 0 {
-        format!("· {} live · {} composted · {} beds", live, composted, beds.len())
+        format!(
+            "· {} live · {} composted · {} beds",
+            live,
+            composted,
+            beds.len()
+        )
     } else {
         format!("· {} live · {} beds", live, beds.len())
     };
@@ -174,7 +179,11 @@ fn render_bloom_html(
             for j in (i + 1)..bed.seeds.len() {
                 let a = &bed.seeds[i];
                 let b = &bed.seeds[j];
-                let (a, b) = if a < b { (a.clone(), b.clone()) } else { (b.clone(), a.clone()) };
+                let (a, b) = if a < b {
+                    (a.clone(), b.clone())
+                } else {
+                    (b.clone(), a.clone())
+                };
                 let key = (a.clone(), b.clone(), format!("bed:{}", bed.name));
                 if seen.insert(key) {
                     edges.push(serde_json::json!({
@@ -197,7 +206,11 @@ fn render_bloom_html(
             for j in (i + 1)..ids.len() {
                 let a = &ids[i];
                 let b = &ids[j];
-                let (a, b) = if a < b { (a.clone(), b.clone()) } else { (b.clone(), a.clone()) };
+                let (a, b) = if a < b {
+                    (a.clone(), b.clone())
+                } else {
+                    (b.clone(), a.clone())
+                };
                 let key = (a.clone(), b.clone(), format!("tag:{}", tag));
                 if seen.insert(key) {
                     edges.push(serde_json::json!({
@@ -339,11 +352,7 @@ fn render_bloom_html(
     Ok(rendered)
 }
 
-fn render_index_md(
-    garden: &Garden,
-    seeds: &[Seed],
-    beds: &[crate::model::Bed],
-) -> String {
+fn render_index_md(garden: &Garden, seeds: &[Seed], beds: &[crate::model::Bed]) -> String {
     let mut out = String::new();
     out.push_str("# the garden, in passing\n\n");
     let live = seeds.iter().filter(|s| !s.is_composted).count();
@@ -383,12 +392,7 @@ fn render_index_md(
     out.push_str("## recent seeds\n\n");
     for s in seeds.iter().rev().take(10) {
         let prefix = if s.is_composted { "~ " } else { "" };
-        out.push_str(&format!(
-            "- {}**{}** — {}",
-            prefix,
-            s.planted,
-            s.id,
-        ));
+        out.push_str(&format!("- {}**{}** — {}", prefix, s.planted, s.id,));
         if let Some(m) = &s.mood {
             out.push_str(&format!(" · {}", m));
         }
@@ -447,5 +451,27 @@ fn mood_color(mood: &str) -> &'static str {
         "#7a8aa6" // dusk blue
     } else {
         "#5fb98a" // moss default
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn mood_color_known() {
+        assert_eq!(mood_color("quietly elated"), "#b6e3a5");
+        assert_eq!(mood_color("Tender"), "#d99a8a");
+        assert_eq!(mood_color("hopeful"), "#f4d35e");
+        assert_eq!(mood_color("curious"), "#88c5e2");
+        assert_eq!(mood_color("restless"), "#e89c4f");
+        assert_eq!(mood_color("quiet"), "#9eb1aa");
+        assert_eq!(mood_color("still"), "#9eb1aa");
+    }
+
+    #[test]
+    fn mood_color_unknown_defaults_to_moss() {
+        assert_eq!(mood_color(""), "#5fb98a");
+        assert_eq!(mood_color("something else"), "#5fb98a");
     }
 }

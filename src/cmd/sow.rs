@@ -22,10 +22,16 @@ pub fn run(args: SowArgs) -> Result<()> {
 
     let seed_path = garden.seeds_dir().join(format!("{}.md", args.seed));
     if !seed_path.exists() {
-        anyhow::bail!("no seed named `{}` in {}", args.seed, garden.seeds_dir().display());
+        anyhow::bail!(
+            "no seed named `{}` in {}",
+            args.seed,
+            garden.seeds_dir().display()
+        );
     }
 
-    let bed_path = garden.beds_dir().join(format!("{}.md", Bed::slug(&args.bed)));
+    let bed_path = garden
+        .beds_dir()
+        .join(format!("{}.md", Bed::slug(&args.bed)));
     let mut bed = if bed_path.exists() {
         Bed::load(&bed_path)?
     } else {

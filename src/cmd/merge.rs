@@ -1,6 +1,4 @@
-use crate::model::{
-    load_all_seeds, make_seed_id, unique_seed_id, Garden, Seed,
-};
+use crate::model::{load_all_seeds, make_seed_id, unique_seed_id, Garden, Seed};
 use anyhow::{Context, Result};
 use chrono::Utc;
 use clap::Args;
@@ -76,7 +74,14 @@ pub fn run(args: MergeArgs) -> Result<()> {
          {}\n\n\
          ## from {}\n\n\
          {}\n",
-        a.id, a.planted, b.id, b.planted, a.id, a.body.trim(), b.id, b.body.trim()
+        a.id,
+        a.planted,
+        b.id,
+        b.planted,
+        a.id,
+        a.body.trim(),
+        b.id,
+        b.body.trim()
     );
 
     let new_seed = Seed {

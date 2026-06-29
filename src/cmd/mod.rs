@@ -11,4 +11,6 @@ pub mod quote;
 pub mod sow;
 pub mod tag;
 pub mod tend;
+pub mod today;
+pub mod unmerge;
 pub mod wander;

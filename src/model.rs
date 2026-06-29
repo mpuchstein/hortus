@@ -108,8 +108,8 @@ impl Seed {
     }
 
     pub fn load(path: &Path) -> Result<Self> {
-        let raw = fs::read_to_string(path)
-            .with_context(|| format!("reading seed {}", path.display()))?;
+        let raw =
+            fs::read_to_string(path).with_context(|| format!("reading seed {}", path.display()))?;
         let (fm, body) = split_frontmatter(&raw);
         let mut s: Seed =
             serde_yaml::from_str(&fm).with_context(|| format!("parsing {}", path.display()))?;
@@ -141,8 +141,7 @@ impl Seed {
         if !out.ends_with('\n') {
             out.push('\n');
         }
-        fs::write(&new_path, out)
-            .with_context(|| format!("writing {}", new_path.display()))?;
+        fs::write(&new_path, out).with_context(|| format!("writing {}", new_path.display()))?;
         Ok(())
     }
 }
@@ -159,7 +158,9 @@ pub struct Bed {
 
 impl Bed {
     pub fn file_path(&self, garden: &Garden) -> PathBuf {
-        garden.beds_dir().join(format!("{}.md", Bed::slug(&self.name)))
+        garden
+            .beds_dir()
+            .join(format!("{}.md", Bed::slug(&self.name)))
     }
 
     pub fn slug(s: &str) -> String {
@@ -174,8 +175,8 @@ impl Bed {
     }
 
     pub fn load(path: &Path) -> Result<Self> {
-        let raw = fs::read_to_string(path)
-            .with_context(|| format!("reading bed {}", path.display()))?;
+        let raw =
+            fs::read_to_string(path).with_context(|| format!("reading bed {}", path.display()))?;
         let (fm, body) = split_frontmatter(&raw);
         let mut b: Bed =
             serde_yaml::from_str(&fm).with_context(|| format!("parsing {}", path.display()))?;
@@ -255,9 +256,7 @@ pub fn load_all_seeds(garden: &Garden) -> Result<Vec<Seed>> {
         if !dir.exists() {
             continue;
         }
-        for entry in fs::read_dir(&dir)
-            .with_context(|| format!("reading {}", dir.display()))?
-        {
+        for entry in fs::read_dir(&dir).with_context(|| format!("reading {}", dir.display()))? {
             let entry = entry?;
             let path = entry.path();
             if path.extension().and_then(|s| s.to_str()) == Some("md") {
@@ -346,9 +345,84 @@ pub fn make_seed_id(planted: NaiveDate, body: &str) -> String {
 pub fn unique_seed_id(garden: &Garden, base: &str) -> String {
     let mut candidate = base.to_string();
     let mut n = 2;
-    while garden.seeds_dir().join(format!("{}.md", candidate)).exists() {
+    while garden
+        .seeds_dir()
+        .join(format!("{}.md", candidate))
+        .exists()
+    {
         candidate = format!("{}-{}", base, n);
         n += 1;
     }
     candidate
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn bed_slug_basic() {
+        assert_eq!(Bed::slug("On Being an AI"), "on-being-an-ai");
+        assert_eq!(Bed::slug("language"), "language");
+        assert_eq!(Bed::slug("  multi   space  "), "multi-space");
+        assert_eq!(Bed::slug("with.dots/and-slashes"), "with-dots-and-slashes");
+        assert_eq!(Bed::slug(""), "");
+    }
+
+    #[test]
+    fn split_frontmatter_basic() {
+        let raw = "---\nid: foo\nmood: happy\n---\n\nthe body\n";
+        let (fm, body) = split_frontmatter(raw);
+        assert!(fm.contains("id: foo"));
+        assert!(fm.contains("mood: happy"));
+        assert!(body.contains("the body"));
+    }
+
+    #[test]
+    fn split_frontmatter_no_fm() {
+        let (fm, body) = split_frontmatter("just a body\n");
+        assert_eq!(fm, "");
+        assert!(body.contains("just a body"));
+    }
+
+    #[test]
+    fn split_frontmatter_trailing() {
+        // No trailing newline after the closing ---
+        let raw = "---\nid: x\n---\nbody";
+        let (fm, body) = split_frontmatter(raw);
+        assert!(fm.contains("id: x"));
+        assert!(body.contains("body"));
+    }
+
+    #[test]
+    fn make_seed_id_simple() {
+        let d = NaiveDate::from_ymd_opt(2026, 6, 29).unwrap();
+        assert_eq!(
+            make_seed_id(d, "A small thought about gardens"),
+            "2026-06-29-a-small-thought-about"
+        );
+    }
+
+    #[test]
+    fn make_seed_id_strips_punctuation() {
+        let d = NaiveDate::from_ymd_opt(2026, 6, 29).unwrap();
+        assert_eq!(
+            make_seed_id(d, "Hello, world! How are you?"),
+            "2026-06-29-hello-world-how-are"
+        );
+    }
+
+    #[test]
+    fn make_seed_id_respects_length_cap() {
+        let d = NaiveDate::from_ymd_opt(2026, 6, 29).unwrap();
+        let id = make_seed_id(d, "one two three four five six seven");
+        // 4 words taken, length-capped at 32
+        assert!(id.len() <= "2026-06-29-".len() + 32);
+    }
+
+    #[test]
+    fn make_seed_id_empty_body() {
+        let d = NaiveDate::from_ymd_opt(2026, 6, 29).unwrap();
+        assert_eq!(make_seed_id(d, ""), "2026-06-29-untitled");
+    }
 }

@@ -90,12 +90,7 @@ pub fn run(args: ListArgs) -> Result<()> {
 
     let n = filtered.len();
     let noun = if n == 1 { "seed" } else { "seeds" };
-    println!(
-        "{} {} {}",
-        "·".green(),
-        n.to_string().bright_green(),
-        noun
-    );
+    println!("{} {} {}", "·".green(), n.to_string().bright_green(), noun);
     println!();
     for s in filtered {
         let marker = if s.is_composted { "~" } else { " " };
@@ -108,7 +103,14 @@ pub fn run(args: ListArgs) -> Result<()> {
         let tag_part = if s.tags.is_empty() {
             String::new()
         } else {
-            format!("  {}", s.tags.iter().map(|t| format!("#{}", t)).collect::<Vec<_>>().join(" "))
+            format!(
+                "  {}",
+                s.tags
+                    .iter()
+                    .map(|t| format!("#{}", t))
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            )
         };
         println!(
             "  {} {} {}{}{}",
@@ -150,4 +152,27 @@ fn parse_since(s: &str) -> Option<NaiveDate> {
         }
     }
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn parse_since_iso() {
+        let d = parse_since("2026-01-15").unwrap();
+        assert_eq!(d, NaiveDate::from_ymd_opt(2026, 1, 15).unwrap());
+    }
+
+    #[test]
+    fn parse_since_invalid() {
+        assert!(parse_since("not a date").is_none());
+    }
+
+    #[test]
+    fn parse_since_days() {
+        let d = parse_since("7d").unwrap();
+        let expected = chrono::Utc::now().date_naive() - chrono::Duration::days(7);
+        assert_eq!(d, expected);
+    }
 }

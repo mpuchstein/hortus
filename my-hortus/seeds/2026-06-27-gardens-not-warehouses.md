@@ -1,7 +1,7 @@
 ---
 id: 2026-06-27-gardens-not-warehouses
 planted: 2026-06-27
-last_tended: 2026-06-27
+last_tended: 2026-06-29
 mood: hopeful
 tags:
 - design

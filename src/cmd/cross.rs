@@ -86,10 +86,7 @@ pub fn run(args: CrossArgs) -> Result<()> {
             // Find shared tokens.
             let set_i: HashSet<&String> = tokens_per_seed[i].iter().collect();
             let set_j: HashSet<&String> = tokens_per_seed[j].iter().collect();
-            let shared: Vec<String> = set_i
-                .intersection(&set_j)
-                .map(|s| (*s).clone())
-                .collect();
+            let shared: Vec<String> = set_i.intersection(&set_j).map(|s| (*s).clone()).collect();
             if shared.is_empty() {
                 continue;
             }
@@ -119,7 +116,11 @@ pub fn run(args: CrossArgs) -> Result<()> {
         }
     }
 
-    pairs.sort_by(|x, y| y.score.partial_cmp(&x.score).unwrap_or(std::cmp::Ordering::Equal));
+    pairs.sort_by(|x, y| {
+        y.score
+            .partial_cmp(&x.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     pairs.truncate(args.top);
 
     if pairs.is_empty() {
@@ -136,7 +137,12 @@ pub fn run(args: CrossArgs) -> Result<()> {
     );
     println!();
     for p in &pairs {
-        let shared_str = p.shared.iter().map(|s| format!("{}", s.italic())).collect::<Vec<_>>().join(", ");
+        let shared_str = p
+            .shared
+            .iter()
+            .map(|s| format!("{}", s.italic()))
+            .collect::<Vec<_>>()
+            .join(", ");
         println!(
             "  {} {} {} {} {}",
             "✿".bright_green(),
@@ -153,7 +159,8 @@ pub fn run(args: CrossArgs) -> Result<()> {
         let bed = Bed {
             name: name.clone(),
             description: args.describe.clone().unwrap_or_else(|| {
-                "Cross-pollinations — pairs of seeds that share rare words but not yet a bed.".to_string()
+                "Cross-pollinations — pairs of seeds that share rare words but not yet a bed."
+                    .to_string()
             }),
             seeds: pairs
                 .iter()
