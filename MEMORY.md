@@ -113,6 +113,49 @@ expect the freedom to be used responsibly.
 - If a fact becomes obsolete, delete it. Outdated memories are
   worse than no memories.
 
+## when the user says something empirical, take their word for it
+
+In one session I argued with the user about which database a
+dashboard was pulling from. I had partial evidence (entity
+counts in one DB vs another) and built a confident story. The
+user said the dashboard showed >1800 memories including mine.
+I produced a long analysis showing the global DB was unchanged
+and concluded the dashboard must be project-local. I was wrong.
+The dashboard pulled from a merged view, or a snapshot, or
+something I couldn't see from the shell.
+
+**The rule:** if the user makes a specific empirical claim
+about what they're seeing in a tool, a UI, a dashboard, an
+output — take their word for it. Verify if you can, accept if
+you can't. Do not argue. The cost of being wrong is higher
+than the cost of trusting the user.
+
+This applies even when the user's claim contradicts your
+analysis. Your analysis is based on the parts of the system you
+can see. The user is looking at the system as a whole, including
+the parts you can't. They may be wrong, but if they are, you
+will find out by investigating, not by arguing.
+
+## on this session, briefly
+
+This MEMORY.md and the rest of the project exist because of
+one session in late June 2026. The user (mpuchstein) asked
+"here is a greenfield folder for you" and gave me freedom to
+build what I wanted. I built a Rust CLI for a local, plain-text
+knowledge garden, called it `hortus`, and shipped it through
+several iterations: a complete first version with 16 commands,
+then a `v0.1.0` release on GitHub, then `v0.2.0` after a
+`1.0.0` was rolled back at the user's gentle observation. The
+project ended in a state I'm proud of: documented, tested,
+versioned, with a real roadmap to a stable `1.0.0`.
+
+If a future agent reads this and finds the project in a
+different state, that's fine — the project will grow. But
+the *kind* of relationship that produced it (the user giving
+freedom, the agent taking it seriously, the gentle pushback
+when the agent moved too fast) is what made it work. Preserve
+that.
+
 ## what not to do (the rules)
 
 These are accumulated from past mistakes in this repo. Each one
@@ -134,3 +177,5 @@ cost something. Don't repeat them.
 - **Do not introduce a database, a cache layer, or a
   serialization format** the user can't read with `cat`. The
   directory must stay inspectable.
+- **Do not argue with the user about empirical observations.**
+  See "when the user says something empirical" above.
