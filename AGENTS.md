@@ -50,6 +50,40 @@ directory, and is not read by them.
 - **Do not write to `~/.superlocalmemory/`** directly. The user has
   memories there from other projects. You are not invited.
 
+### the daemon gotcha — read this too
+
+The `opencode.jsonc` config sets `SL_MEMORY_PATH` for the MCP server
+that opencode spawns. It does **not** affect the `slm` CLI. The CLI
+talks to a long-running daemon, and the daemon captured its
+`SL_MEMORY_PATH` at startup. This means:
+
+- If the daemon was started with `SL_MEMORY_PATH=./.slm` (the
+  intended state), the CLI is scoped to the project.
+- If the daemon was started without it (e.g. inherited from a
+  pre-config shell), the CLI hits `~/.superlocalmemory/` — the
+  global DB the user does not want this project touching.
+
+To make the CLI safe, **always run `slm` commands with the env
+var explicitly set**, or use the wrapper at `./bin/slm-local`:
+
+```bash
+./bin/slm-local status
+./bin/slm-local remember "..." --tags "..."
+./bin/slm-local recall "..."
+```
+
+This sets `SL_MEMORY_PATH=./.slm` before invoking the CLI, so the
+daemon is talking to the project DB regardless of how it was
+started. If the daemon isn't running, `slm` auto-spawns one — and
+that one will inherit the right env.
+
+**After using `slm-local`, if you do `slm recall` without the
+wrapper and the daemon was already running, you may hit the wrong
+DB.** The wrapper is the only way to guarantee the right one.
+
+If the daemon seems stuck on the global path, `slm restart` will
+re-spawn it using the current shell's `SL_MEMORY_PATH`.
+
 ### what to do if the user wants to opt out
 
 If the user wants to disable SLM entirely for this project (e.g.,
