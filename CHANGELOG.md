@@ -4,11 +4,64 @@ All notable changes to hortus will be documented in this file. The format
 is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 this project does its best to adhere to [Semantic Versioning](https://semver.org/).
 
-## [0.1.0] — 2026-06-29
+## [1.0.0] — 2026-06-29
 
-The first release of hortus as a complete, documented, tested tool. The
-garden has a front gate, sixteen verbs, an essay behind it, and a CI
-workflow that keeps it honest.
+The first stable release. The on-disk format is at version `1` and
+documented in [`SCHEMA.md`](./SCHEMA.md). Breaking changes to the file
+format will require a major version bump; additive changes do not.
+
+### Added
+
+- **File format versioning.** A `version` field in `climate.toml` is
+  required; the binary refuses to read a garden whose version it does
+  not know. The current format version is `1`; the constant
+  `HORTUS_FORMAT_VERSION` in `src/model.rs` is the source of truth.
+- **`hortus forage <query>`.** Search the garden for a phrase, with
+  context lines. Case-insensitive substring search across seed bodies
+  and (optionally) id. Supports `--context N`, `--bed`, `--all`, and
+  `--json`.
+- **`hortus stats`.** A small annual review. Counts of live and
+  composted seeds, beds, seeds-per-month histogram, composted-per-month
+  histogram, mood distribution, top tags. Supports `--json`.
+- **`hortus untend [seed] | --all`.** Clear `last_tended` for one seed
+  or all live seeds, so they show up in `wander --stale` again.
+- **`--json` output** for `list`, `cross`, `forage`, `stats`, `today`.
+  Same data as the human-readable output, in a stable JSON shape.
+- **17 CLI integration tests** in `tests/cli.rs`. Spawn the actual
+  binary as a subprocess and exercise the full surface, catching what
+  the unit and integration tests miss (clap parsing, exit codes,
+  stdout vs stderr, real filesystem behavior). Total tests: **50**
+  (24 unit, 9 garden integration, 17 CLI integration).
+- **[`SCHEMA.md`](./SCHEMA.md)** — the on-disk format spec. Documents
+  every field, the version policy, the migration story, and what the
+  format rules out.
+- **[`CONTRIBUTING.md`](./CONTRIBUTING.md)** — how to add a command, a
+  field, a theme, or a view. The "how to extend this tool" doc.
+
+### Stability promise
+
+The `1.0.0` release is a commitment. The on-disk format will not change
+in a breaking way without a major version bump. Additive changes (new
+optional fields, new sections in `climate.toml`, new files in the
+directory) may land in any release. The CLI surface (command names,
+flag names, default values) is considered stable; renaming a command or
+removing a flag will also require a major version bump.
+
+The API of the Rust library (`hortus::*`) is *not* considered stable.
+Library consumers should pin a specific version. The library exists
+primarily to support the binary; the on-disk format and the CLI are
+the public contract.
+
+### Notes
+
+This release ships a populated example garden at `./my-hortus/` so a
+fresh clone has a living thing to look at on day one. 5 live seeds, 1
+composted, 4 beds, a generated letter, a generated diary, a climate
+with a small history of moods.
+
+The half-finished thing remains the living thing. The garden is
+finished; the gardener is not.
+
 
 ### Added
 

@@ -55,7 +55,9 @@ no longer of the season.
 | `hortus plant` (no args) | open the editor with a template: climate + recent seeds as context |
 | `hortus sow <bed> <seed>` | place a seed in a bed (creates the bed if absent) |
 | `hortus tend <seed>` | open the seed in `$VISUAL` / `$EDITOR`; mark as watered |
+| `hortus untend [seed] \| --all` | clear `last_tended` so a seed shows up in `wander --stale` again |
 | `hortus list [--bed] [--tag] [--mood] [--since]` | list seeds, with filters |
+| `hortus forage <query> [--context N]` | search the garden for a phrase, with context |
 | `hortus wander [--stale] [--stale-days N]` | a random bed, a few seeds — or the oldest untended |
 | `hortus quote [--count N] [--bed name]` | a random seed from the garden — a flower in passing |
 | `hortus compost <id> --epitaph "..."` | archive a seed with a one-line epitaph |
@@ -67,8 +69,13 @@ no longer of the season.
 | `hortus tag list` (no id) | every tag in the garden, with counts |
 | `hortus diary [--days N]` | write a weekly journal entry |
 | `hortus letter [--days N]` | write a one-page letter to self from the past month |
+| `hortus stats` | a small annual review: seeds per month, moods, top tags |
 | `hortus climate [--mood] [--reading] [--season]` | show or set the garden's weather; snapshots the old now |
 | `hortus bloom` | terminal mosaic + `bloom.html` + `index.md` |
+
+The `list`, `cross`, `forage`, `stats`, and `today` commands all accept
+`--json` for scriptable output. The on-disk format is versioned (see
+[`SCHEMA.md`](./SCHEMA.md)); the current format version is `1`.
 
 `bloom.html` includes a small **mood timeline** at the top — the weather of
 the garden, day by day, with each day colored by its dominant mood.
@@ -209,9 +216,11 @@ The repo ships with a small example garden at `./my-hortus/`. It has:
 
 There's a longer piece in [`ESSAY.md`](./ESSAY.md) about what this is and
 why it is shaped the way it is. If you want to extend the tool, read
-[`DESIGN.md`](./DESIGN.md) — it covers the architecture, the file
-format, the algorithms, and the extension points. The release notes live
-in [`CHANGELOG.md`](./CHANGELOG.md).
+[`DESIGN.md`](./DESIGN.md) and [`CONTRIBUTING.md`](./CONTRIBUTING.md) —
+they cover the architecture, the file format, the algorithms, and the
+extension points. The on-disk format is documented in
+[`SCHEMA.md`](./SCHEMA.md), and is currently at version `1`. The
+release notes live in [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## why a garden
 
@@ -240,9 +249,11 @@ I want to be surprised by what I think next year.
   across the garden. No model, no API, no GPU — just counts.
 - **Single binary.** No runtime. No `npm install`. Sits on a machine for
   years.
-- **33 tests, CI on every push.** `cargo test` is the source of truth for
-  the model and the high-level operations. The CI badge at the top tells
-  you the last push was green.
+- **50 tests, CI on every push.** `cargo test` runs 24 unit tests
+  (inline), 9 garden integration tests (filesystem, with a Mutex
+  serializing the `HORTUS_ROOT` env var), and 17 CLI integration tests
+  that spawn the actual binary. The CI badge at the top tells you the
+  last push was green.
 
 ## what the garden is not (yet)
 

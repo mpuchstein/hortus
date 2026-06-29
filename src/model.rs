@@ -201,13 +201,37 @@ impl Bed {
     }
 }
 
+/// The current on-disk format version of a garden. Bumped when a file format
+/// change is non-additive (renames a field, changes a type, etc.). Additive
+/// changes (new optional fields, new section in climate.toml) do not bump
+/// the version.
+pub const HORTUS_FORMAT_VERSION: u32 = 1;
+
 /// Climate: the ambient state of the gardener.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Climate {
+    /// Format version. Defaults to 1 if missing (the v0.1 → v1.0 transition
+    /// gives every existing garden a version of 1 on first save).
+    #[serde(default = "default_format_version")]
+    pub version: u32,
     #[serde(default)]
     pub now: ClimateNow,
     #[serde(default)]
     pub history: Vec<ClimateSnapshot>,
+}
+
+fn default_format_version() -> u32 {
+    HORTUS_FORMAT_VERSION
+}
+
+impl Default for Climate {
+    fn default() -> Self {
+        Self {
+            version: HORTUS_FORMAT_VERSION,
+            now: ClimateNow::default(),
+            history: Vec::new(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -235,7 +259,22 @@ impl Climate {
         if p.exists() {
             let raw = fs::read_to_string(&p)
                 .with_context(|| format!("reading climate {}", p.display()))?;
-            Ok(toml::from_str(&raw).context("parsing climate.toml")?)
+            let mut c: Self =
+                toml::from_str(&raw).context("parsing climate.toml")?;
+            // Existing pre-versioning files implicitly use version 1. Bump
+            // on save so the version field is set going forward.
+            if c.version == 0 {
+                c.version = HORTUS_FORMAT_VERSION;
+            }
+            if c.version > HORTUS_FORMAT_VERSION {
+                anyhow::bail!(
+                    "climate.toml has version {}, but this binary only knows up to version {}. \
+                     please upgrade hortus.",
+                    c.version,
+                    HORTUS_FORMAT_VERSION
+                );
+            }
+            Ok(c)
         } else {
             Ok(Self::default())
         }

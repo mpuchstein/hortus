@@ -12,6 +12,9 @@ pub struct TodayArgs {
     /// Skip the random quote at the end.
     #[arg(long)]
     pub no_quote: bool,
+    /// Output as JSON instead of a human-readable summary.
+    #[arg(long)]
+    pub json: bool,
 }
 
 pub fn run(args: TodayArgs) -> Result<()> {
@@ -25,6 +28,28 @@ pub fn run(args: TodayArgs) -> Result<()> {
         .iter()
         .filter(|s| s.last_tended == Some(today))
         .collect();
+
+    if args.json {
+        let json = serde_json::json!({
+            "date": today.to_string(),
+            "climate": {
+                "mood": climate.now.mood,
+                "reading": climate.now.reading,
+                "season": climate.now.season,
+            },
+            "today_seeds": today_seeds.iter().map(|s| serde_json::json!({
+                "id": s.id,
+                "mood": s.mood,
+                "first_line": s.body.lines().find(|l| !l.trim().is_empty()),
+            })).collect::<Vec<_>>(),
+            "recently_tended": recently_tended.iter()
+                .filter(|s| !today_seeds.iter().any(|t| t.id == s.id))
+                .map(|s| serde_json::json!({"id": s.id}))
+                .collect::<Vec<_>>(),
+        });
+        println!("{}", serde_json::to_string_pretty(&json).expect("serializing today"));
+        return Ok(());
+    }
 
     println!();
     println!(

@@ -23,6 +23,10 @@ pub struct CrossArgs {
     /// Minimum surprise score to include.
     #[arg(long, default_value_t = 0.0)]
     pub min_score: f32,
+
+    /// Output as JSON instead of a human-readable list.
+    #[arg(long)]
+    pub json: bool,
 }
 
 #[derive(Debug)]
@@ -124,9 +128,32 @@ pub fn run(args: CrossArgs) -> Result<()> {
     pairs.truncate(args.top);
 
     if pairs.is_empty() {
+        if args.json {
+            println!("[]");
+        } else {
+            println!(
+                "{}",
+                "no surprising cross-links found. the garden's thoughts have settled.".yellow()
+            );
+        }
+        return Ok(());
+    }
+
+    if args.json {
+        let json: Vec<serde_json::Value> = pairs
+            .iter()
+            .map(|p| {
+                serde_json::json!({
+                    "a": p.a,
+                    "b": p.b,
+                    "score": p.score,
+                    "shared": p.shared,
+                })
+            })
+            .collect();
         println!(
             "{}",
-            "no surprising cross-links found. the garden's thoughts have settled.".yellow()
+            serde_json::to_string_pretty(&json).expect("serializing pairs")
         );
         return Ok(());
     }

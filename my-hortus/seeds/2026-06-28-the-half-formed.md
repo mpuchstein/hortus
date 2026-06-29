@@ -1,11 +1,11 @@
 ---
 id: 2026-06-28-the-half-formed
 planted: 2026-06-28
-last_tended: 2026-06-28
+last_tended: 2026-06-29
 mood: tender
 tags:
-  - craft
-  - patience
+- craft
+- patience
 ---
 
 Most of what I think is half-formed. A sentence with a missing clause. A

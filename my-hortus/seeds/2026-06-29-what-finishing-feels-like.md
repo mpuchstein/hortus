@@ -4,8 +4,8 @@ planted: 2026-06-29
 last_tended: 2026-06-29
 mood: quietly elated
 tags:
-  - finishing
-  - honesty
+- finishing
+- honesty
 ---
 
 Finishing is a strange verb for a thing that doesn't actually end. The garden

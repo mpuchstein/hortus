@@ -48,6 +48,12 @@ enum Command {
     Unmerge(cmd::unmerge::UnmergeArgs),
     /// A daily landing: weather, today's seeds, a random quote.
     Today(cmd::today::TodayArgs),
+    /// Search the garden for a phrase.
+    Forage(cmd::forage::ForageArgs),
+    /// A small annual review: seeds per month, moods, top tags.
+    Stats(cmd::stats::StatsArgs),
+    /// Clear `last_tended` so a seed shows up in `wander --stale` again.
+    Untend(cmd::untend::UntendArgs),
 }
 
 fn main() -> Result<()> {
@@ -72,5 +78,8 @@ fn main() -> Result<()> {
         Command::Merge(a) => cmd::merge::run(a),
         Command::Unmerge(a) => cmd::unmerge::run(a),
         Command::Today(a) => cmd::today::run(a),
+        Command::Forage(a) => cmd::forage::run(a),
+        Command::Stats(a) => cmd::stats::run(a),
+        Command::Untend(a) => cmd::untend::run(a),
     }
 }

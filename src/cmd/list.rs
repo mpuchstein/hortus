@@ -25,6 +25,9 @@ pub struct ListArgs {
     /// Show only the first line of each body.
     #[arg(long)]
     pub oneline: bool,
+    /// Output as JSON instead of a human-readable table.
+    #[arg(long)]
+    pub json: bool,
 }
 
 pub fn run(args: ListArgs) -> Result<()> {
@@ -76,7 +79,11 @@ pub fn run(args: ListArgs) -> Result<()> {
         .collect();
 
     if filtered.is_empty() {
-        println!("{}", "no seeds match.".yellow());
+        if args.json {
+            println!("[]");
+        } else {
+            println!("{}", "no seeds match.".yellow());
+        }
         return Ok(());
     }
 
@@ -87,6 +94,30 @@ pub fn run(args: ListArgs) -> Result<()> {
             .then(a.is_composted.cmp(&b.is_composted))
             .then(a.id.cmp(&b.id))
     });
+
+    if args.json {
+        let json: Vec<serde_json::Value> = filtered
+            .iter()
+            .map(|s| {
+                serde_json::json!({
+                    "id": s.id,
+                    "planted": s.planted.to_string(),
+                    "last_tended": s.last_tended.map(|d| d.to_string()),
+                    "mood": s.mood,
+                    "tags": s.tags,
+                    "is_composted": s.is_composted,
+                    "composted_at": s.composted_at.map(|d| d.to_string()),
+                    "epitaph": s.epitaph,
+                    "body": s.body.trim(),
+                })
+            })
+            .collect();
+        println!(
+            "{}",
+            serde_json::to_string_pretty(&json).expect("serializing seeds")
+        );
+        return Ok(());
+    }
 
     let n = filtered.len();
     let noun = if n == 1 { "seed" } else { "seeds" };
