@@ -220,7 +220,9 @@ why it is shaped the way it is. If you want to extend the tool, read
 they cover the architecture, the file format, the algorithms, and the
 extension points. The on-disk format is documented in
 [`SCHEMA.md`](./SCHEMA.md), and is currently at version `1`. The
-release notes live in [`CHANGELOG.md`](./CHANGELOG.md).
+release notes live in [`CHANGELOG.md`](./CHANGELOG.md). The path from
+the current `0.2.0` to a real `1.0.0` is in
+[`ROADMAP.md`](./ROADMAP.md).
 
 ## why a garden
 
@@ -254,6 +256,10 @@ I want to be surprised by what I think next year.
   serializing the `HORTUS_ROOT` env var), and 17 CLI integration tests
   that spawn the actual binary. The CI badge at the top tells you the
   last push was green.
+- **Status: pre-1.0.** The current version is `0.2.0`. The
+  on-disk format is committed at version `1`, but the project has
+  not yet earned the `1.0.0` number — see
+  [`ROADMAP.md`](./ROADMAP.md) for the path.
 
 ## what the garden is not (yet)
 
