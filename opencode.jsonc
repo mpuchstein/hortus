@@ -1,0 +1,30 @@
+{
+  // Project-level opencode config. The purpose of this file is one
+  // thing: make sure that the superlocalmemory (SLM) MCP server,
+  // which is enabled in the user-level config, does NOT contaminate
+  // this project's memory with the user's other work, and does not
+  // get contaminated by this project's work.
+  //
+  // We do this by scoping SLM to a project-local path via the
+  // SL_MEMORY_PATH env var. The MCP server reads and writes only to
+  // ./.slm/, which is .gitignored. The user's global SLM database
+  // at ~/.superlocalmemory/ is untouched in either direction.
+  //
+  // To opt out entirely (e.g. you don't want the SLM tools at all
+  // for this project), set the mcp.superlocalmemory entry to
+  // { "enabled": false }.
+  //
+  // The schema is at https://opencode.ai/config.json
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "superlocalmemory": {
+      "type": "local",
+      "command": ["slm", "mcp"],
+      "cwd": ".",
+      "environment": {
+        "SL_MEMORY_PATH": "./.slm"
+      },
+      "enabled": true
+    }
+  }
+}

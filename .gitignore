@@ -4,3 +4,7 @@
 
 # example garden caches
 my-hortus/.hortus/cache
+
+# project-local superlocalmemory (scoped via opencode.jsonc)
+.slm/
+
