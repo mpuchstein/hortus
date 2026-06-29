@@ -7,4 +7,5 @@ my-hortus/.hortus/cache
 
 # project-local superlocalmemory (scoped via opencode.jsonc)
 .slm/
+.github/copilot-instructions.md
 
