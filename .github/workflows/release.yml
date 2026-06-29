@@ -89,7 +89,7 @@ jobs:
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           if [ -f CHANGELOG.md ]; then
-            awk -v v="[${VERSION}]" 'BEGIN{flag=0} $0 ~ "^## "v" " {flag=1; next} $0 ~ "^## \\[" {flag=0} flag' CHANGELOG.md > release-notes.md || true
+            awk -v v="${VERSION}" 'BEGIN{flag=0} $0 ~ "^## \\["v"\\]" {flag=1; next} $0 ~ "^## \\[" {flag=0} flag' CHANGELOG.md > release-notes.md || true
           fi
           if [ ! -s release-notes.md ]; then
             {
